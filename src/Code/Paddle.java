@@ -22,16 +22,16 @@ public class Paddle {
         paddle_width = (int) (SCREEN_WIDTH * scale_width);
         reset();
         speed = paddle_width / 2;
-        paddleImage = new ImageIcon(new File("src/Images/paddle.png").getAbsolutePath()).getImage().getScaledInstance(paddle_width, paddle_height, Image.SCALE_DEFAULT);
     }
     public void reset(){
         paddle_Y = SCREEN_HEIGHT - (brick_size * 3);
         paddle_X = ((SCREEN_WIDTH) - paddle_width)/ 2;
+
     }
     public  void  drawPaddle(Graphics g2d){
 
         g2d.setColor(Color.red);
-        g2d.drawImage(paddleImage,paddle_X,paddle_Y,null);
+        g2d.fillRect(paddle_X,paddle_Y,paddle_width,paddle_height);
 
     }
 

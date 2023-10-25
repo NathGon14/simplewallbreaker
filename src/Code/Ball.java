@@ -1,18 +1,15 @@
-package Code.Ball;
+package Code;
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
 
 public class Ball {
 
-    ImageIcon icon = new ImageIcon( new File("src/Images/ball.png").getAbsolutePath());// Image of the ball
-    Image scaleImage;// scale Image of the ball
-    private double speed = 6; // how fast is the ball
-    private int strength = 1;// ball damage when it hit the brick
+
+    private  final double speed = 6; // how fast is the ball
+    private  final int damage = 1;// ball damage when it hit the brick
     private int BOARD_HEIGHT; // the Screen height
     private int BOARD_WIDTH;// the Screen height
     private int diameter; // diameter  of the ball
@@ -34,32 +31,12 @@ public class Ball {
         reset();//reset method called for bring the ball to the default position
 
     }
-//    public Ball(int BOARD_WIDTH, int BOARD_HEIGHT,int diameter,int strength) {
-//        this.BOARD_WIDTH = BOARD_WIDTH;
-//        this.BOARD_HEIGHT = BOARD_HEIGHT;
-//        this.diameter = diameter;
-//
-//        reset();
-//
-//    }
-//
-//    public Ball(int BOARD_WIDTH, int BOARD_HEIGHT,double direction,int diameter) {
-//        this.BOARD_WIDTH = BOARD_WIDTH;
-//        this.BOARD_HEIGHT = BOARD_HEIGHT;
-//        this.diameter = diameter;
-//        reset();
-//
-//    }
-
-
 
 
    //this method is used for reseting the ball to its initial state
     public void reset(){
-        scaleImage  = icon.getImage().getScaledInstance(this.diameter, this.diameter,Image.SCALE_DEFAULT);//Image of the ball
-
         setOutside(false);//bring the ball inside the screen
-        setBallPosition( BOARD_WIDTH/2  , BOARD_HEIGHT - (diameter*6) ); //positioning the ball to its initial or default state
+        setBallPosition( BOARD_WIDTH/2  , BOARD_HEIGHT -BOARD_WIDTH/2 ); //positioning the ball to its initial or default state
         setDirection("top-right"); // the direction which the ball is going
 
     }
@@ -90,34 +67,13 @@ public class Ball {
 
 
     }
-    public String getDirection() {
-        // the direction of the ball  X = 1; ball is going to the right x = -1; ball is going to the left
-        // the direction of the ball  Y = 1; ball is going down  Y = -1; ball is going up
-        if(ball_direction_X == 1 && ball_direction_Y ==1 ){
-            return "down-right";
-        } else if ( this.ball_direction_X == -1 && this.ball_direction_Y == -1) {
-            return "down-left";
-        } else if (ball_direction_X == -1 && ball_direction_Y ==1) {
-            return"top-left";
-        }else return "top-right";
-
-
-    }
-
-//    public void drawPredicted(Graphics g2d) {
-//             predictMove();
-//            g2d.setColor(Color.red);
-//
-//            g2d.fillOval((int) predicted_X, (int) predicted_Y, (diameter), (diameter));
-//            return;
-//
-//    }
 
 
 
     //method use for drawing the ball in the screen
     public void drawBall(Graphics g2d) {
-     g2d.drawImage(scaleImage,(int)ball_X, (int) ball_Y,null);
+    g2d.setColor(Color.white);
+     g2d.fillOval((int)ball_X, (int) ball_Y,diameter,diameter);
     }
 
 
@@ -162,41 +118,51 @@ public class Ball {
          return  collided;
     }
 
+    public Brick getClosestBrick(ArrayList<Brick> bricks) {
+        double minDistance = 1000000;
+        Brick closestBrick= null;
+        //find the closest point
+        for (Brick brick:bricks
+             ) {
+            int brick_size = brick.getSize();
+            int middle_x_brick = brick.getX() + (brick_size/2);
+            int middle_y_brick = brick.getY() + (brick_size/2);
+            int radius = diameter/2;
+            double middle_x_ball = (int) ball_X + radius;
+            int middle_y_ball = (int) ball_Y +radius;
+            double a = middle_x_ball-middle_x_brick;
+            double b = middle_y_ball-middle_y_brick;
+            double distance = sqrt( (a*a) + (b*b) );
+            if(distance <= minDistance){
+                closestBrick = brick;
+                minDistance =distance;
+            }
+        }
+        hit(closestBrick.getX(),closestBrick.getY() , closestBrick.getSize(),closestBrick.getSize());
+        return closestBrick;
+
+    }
 
 
-    //method use for figuring out whether the ball collided on the paddle or the bricks
-    public boolean isHit(int x_position, int y_position , int width, int height) {
+    public  boolean  collided( int x_position, int y_position , int width, int height){
         predictMove();// move the ball on step ahead of the current position
 
         int collided_height= height;// the height of where the ball collided
-        var collided_width= width; // the width of where the ball collided
+        int collided_width= width; // the width of where the ball collided
 
-        var collided_left= x_position;// the X coordinate of where the ball collided
-        var collided_top=y_position; // the Y coordinate of where the ball collided
-        var collided_right= collided_left +collided_width; ; // right side of X coordinate
-        var collided_bottom= collided_top +collided_height; // bottom side of Y coordinate
-        //     (x,y) = (0,5) , width:5 height:5
-        //                                      top: 5
-        //        --------------             --------------
-        //        |            |             |            |
-        //        |            |             |            |
-        // left:0 |            | Right:5     |            |
-        //        |            |             |            |
-        //        |            |             |            |
-        //        --------------             --------------
-        //                                     Bottom: 10
+        int collided_left= x_position;// the X coordinate of where the ball collided
+        int collided_top=y_position; // the Y coordinate of where the ball collided
+        int collided_right= collided_left +collided_width; ; // right side of X coordinate
+        int collided_bottom= collided_top +collided_height; // bottom side of Y coordinate
 
-        boolean hit =false;
-
-        String collided_side = "none";
-
-        //pythagorean theorem
         double radius = diameter/2;
         double ball_middle_point_x =  radius + predicted_X ; // a
         double ball_middle_point_y =  radius + predicted_Y ; // b
+
+
         double closestX = ball_middle_point_x;
         double closestY = ball_middle_point_y;
-      //check which point of the rectangle x and y of the edge of the rectangle is the closest to the point of the circle
+        //check which point of the rectangle x and y of the edge of the rectangle is the closest to the point of the circle
         //find the close X and Y of where the ball collided
         if (ball_middle_point_x < collided_left) {
             closestX = collided_left;      // test left edge
@@ -217,14 +183,44 @@ public class Ball {
         double b = ball_middle_point_y-closestY;
 
         double distance = sqrt( (a*a) + (b*b) );
-
-
-     //collision checking
+        //collision checking
         // if the distance is less than or equal the radius of the ball
         // it collided
 
         if (distance <=radius) {
-            hit = true;
+            return true;
+        }
+        return false;
+
+    }
+
+    //method use for figuring out whether the ball collided on the paddle or the bricks
+    public void hit(int x_position, int y_position , int width, int height) {
+        predictMove();// move the ball on step ahead of the current position
+        int collided_height= height;// the height of where the ball collided
+        int collided_width= width; // the width of where the ball collided
+
+        int collided_left= x_position;// the X coordinate of where the ball collided
+        int collided_top=y_position; // the Y coordinate of where the ball collided
+        int collided_right= collided_left +collided_width; ; // right side of X coordinate
+        int collided_bottom= collided_top +collided_height; // bottom side of Y coordinate
+        double radius = diameter/2;
+        double ball_middle_point_x =  radius + predicted_X ; // a
+        double ball_middle_point_y =  radius + predicted_Y ; // b
+
+        //     (x,y) = (0,5) , width:5 height:5
+        //                                      top: 5
+        //        --------------             --------------
+        //        |            |             |            |
+        //        |            |             |            |
+        // left:0 |            | Right:5     |            |
+        //        |            |             |            |
+        //        |            |             |            |
+        //        --------------             --------------
+        //                                     Bottom: 10
+
+        String collided_side = "none";
+
 
              //check if the ball is inside the box
             // remove it from inside send it to the neareast area without the bricks
@@ -232,7 +228,7 @@ public class Ball {
                     double collision_outside_x = ball_X - diameter * toNearestOne(ball_direction_X);
                     double collision_outside_y = ball_Y - diameter * toNearestOne(ball_direction_Y);
                     setBallPosition(collision_outside_x, collision_outside_y); //change the ball position
-                    isHit(collided_left,collided_top , collided_width, collided_height); // call this method again
+                    hit(collided_left,collided_top , collided_width, collided_height); // call this method again
                 }
 
             //collision
@@ -256,8 +252,7 @@ public class Ball {
             //bounce the ball
             bounce(collided_side ,collided_left,collided_right,collided_bottom,collided_top);
 
-        }
-        return  hit;
+
     }
     // this method is for checking if the ball is inside the paddle or the brick
     private boolean isInsideCollsion(int collided_top,int  collided_left,int collided_right, int collided_bottom){
@@ -418,8 +413,8 @@ public void resetDirection(){
         return predicted_X;
     }
 
-    public int getStrength() {
-        return strength;
+    public int getDamage() {
+        return damage;
     }
 }
 

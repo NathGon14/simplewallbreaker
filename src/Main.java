@@ -10,7 +10,6 @@ public class Main extends JFrame {
 
         EventQueue.invokeLater(() -> {
 
-
             Game breakerGame = new Game();
             breakerGame.setVisible(true);
         });

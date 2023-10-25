@@ -1,15 +1,12 @@
 package Code;
 
-import Code.level.Level;
-
 import javax.swing.*;
 
 public class Game extends JFrame {
-    private Level game = new Level();
     public Game(){
-    add(new Board(game));
+    add(new Board());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(game.getBOARD_WIDTH()+(game.getBrick_size()/2), game.getBOARD_HEIGHT()+game.getBrick_size()+10);
+        setSize(377, 700);
         setLocationRelativeTo(null);
     }
 }
