@@ -341,9 +341,6 @@ public class Ball {
     public void setOutside(boolean outside) {
         this.outside = outside;
     }
-    public boolean isDisabled() {
-        return disabled;
-    }
 
     public double toNearestOne(double direction){
         if(direction <0){
