@@ -17,7 +17,6 @@ public class Board extends JPanel implements ActionListener {
     protected int BALL_SREEN_DIAMETER = 20;
     protected int ball_diameter = 15;
     protected int number_of_bricks_on_width = 12;
-    protected int number_of_row = 5;
     private int height_multiplier = 22;
     private Random random = new Random();
     protected int BOARD_HEIGHT = brick_size * height_multiplier;
@@ -377,10 +376,6 @@ public class Board extends JPanel implements ActionListener {
             }
         }
     }
-
-
-
-
 
 
     class MouseListenerHandler implements MouseMotionListener{

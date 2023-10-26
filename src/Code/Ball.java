@@ -7,13 +7,11 @@ import static java.lang.Math.*;
 
 public class Ball {
 
-
     private  final double speed = 6; // how fast is the ball
     private  final int damage = 1;// ball damage when it hit the brick
     private int BOARD_HEIGHT; // the Screen height
     private int BOARD_WIDTH;// the Screen height
     private int diameter; // diameter  of the ball
-
     private double ball_X; // ball X coordinate
     private double ball_Y; // ball Y coordinate
     private  double ball_direction_X; // the direction of the ball  X = 1; ball is going to the right x = -1; ball is going to the left
@@ -29,7 +27,6 @@ public class Ball {
         this.BOARD_HEIGHT = BOARD_HEIGHT;
         this.diameter = diameter;
         reset();//reset method called for bring the ball to the default position
-
     }
 
 
@@ -337,36 +334,6 @@ public class Ball {
 
     }
 
-  public ArrayList<String> coordinatesKey(int  size){
-        predictMove();
-        int radius = diameter/2;
-      ArrayList<String>Coordinates = new ArrayList<>();
-      int x  = (int)(predicted_X+radius);
-      int y = (int)(predicted_Y+radius);
-      Coordinates.add((x/size)+"/"+(y/size));
-      //check side
-      int viewX,viewY;
-      if(ball_direction_X  <0){
-          viewX = x - radius;
-      }else{
-          viewX = x +radius;
-      }
-      Coordinates.add((viewX/size)+"/"+(y/size));
-
-      if(ball_direction_Y <0){
-          viewY = y -radius;
-      }else{
-          viewY = y +radius;
-      }
-      Coordinates.add((x/size)+"/"+(viewY/size));
-
-
-
-
-
-      return Coordinates;
-
-    }
     public boolean isOutside() {
         return outside;
     }
@@ -407,10 +374,6 @@ public void resetDirection(){
     public  void inverseX(){
         ball_direction_X = -ball_direction_X;
 
-    }
-
-    public double getPredicted_X() {
-        return predicted_X;
     }
 
     public int getDamage() {
